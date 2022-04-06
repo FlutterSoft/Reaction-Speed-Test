@@ -1,13 +1,13 @@
+// TODO
+// If game is in progress then you shouldn't be able to start a new game.. but how since I use the same button. DONE! Added else if to check if the game was in progress.
+
 const button = document.querySelector('button')
 const reactionSpeedSpan = document.querySelector('#reactionSpeed')
 
-let reactionSpeed = 0
 let gameStarted = false
+let inProgress = false
 
 button.addEventListener('click', playGame)
-
-reactionSpeedSpan.innerText = reactionSpeed
-
 
 function changeBtnText(){
     if (gameStarted){
@@ -18,35 +18,68 @@ function changeBtnText(){
     }
 }
 
-function changeColor(){
-    document.querySelector('section').style='background-color: red;'
+function changeColor(){ // change section colour
+    document.querySelector('section').classList.toggle('red')
 }
 
 const timer = {
     startTime : 0,
     endTime : 0,
+    randomTime : 0,
+    difTime : 0,
 
+    // timer functions
     startTimer() {
-        startTime = Date.now()
+        this.startTime = new Date().getTime()
     },
-    randomise(){
-        let time = Math.floor(Math.random()*1000)
-        return time
+    randomise(){ // return random milliseconds up to 6 seconds
+        randomTime = Math.floor(Math.random()*4000)
+        return randomTime
+    },
+    calculateDifference(){
+        difTime = timer.endTime - timer.startTime
+        if (difTime > 100000 || difTime < 0){
+            return 'Clicked too fast! Wait for the red.'
+        }
+        else {
+            return difTime + 'ms'
+        }
     },
 }
 
+
 // when playGame runs it should start the game, change the button text, get the current time, randomise a number for the colour to change. But if game has already started it should return endTime - startTime into the reaction speed span, put the text back to startGame, set gameStarted to false. 
 function playGame(){
-    if (gameStarted){
+    if (gameStarted){ // end game 
+        timer.endTime = new Date().getTime()
         gameStarted = false
-        setTimeout( () => {
+        changeColor()
+        changeBtnText()
+        reactionSpeedSpan.innerText = timer.calculateDifference()
+        timer.startTime = 0
+        timer.endTime = 0
+        timer.randomTime = 0
+        timer.difTime = 0
+
+    }
+
+
+    else if (!gameStarted && inProgress === false) { // start game 
+        reactionSpeedSpan.innerText = ''
+        timer.startTime = 0
+        gameStarted = true
+        changeBtnText() // change button text to say click
+        inProgress = true
+        setTimeout( () => { // change colour after random amount of time
+            // start the time from the moment the game is started
+            timer.startTimer()
             changeColor()
+            inProgress = false
         }, timer.randomise())
     }
+
     else {
-        gameStarted = true
-        changeBtnText()
-        timer.startTimer()
+        console.log('woah game still in progress man')
     }
 
 }
