@@ -20,6 +20,9 @@ function changeBtnText(){
 
 function changeColor(){ // change section colour
     document.querySelector('section').classList.toggle('red')
+    document.querySelector('body').classList.toggle('cream')
+    document.querySelector('button').classList.toggle('cream')
+
 }
 
 const timer = {
@@ -33,7 +36,7 @@ const timer = {
         this.startTime = new Date().getTime()
     },
     randomise(){ // return random milliseconds up to 6 seconds
-        randomTime = Math.floor(Math.random()*4000)
+        randomTime = Math.floor(Math.random()*4000 + 1000)
         return randomTime
     },
     calculateDifference(){
